@@ -31,15 +31,3 @@ The _printf() function produces output according to a format which is described 
 Don’t forget to push your header file
 * All your header files should be include guarded
 * Note that we will not provide the _putchar function for this project
-
-**AUTHORS**
-:----:
-
-[Cacious Lyangenda](https://www.linkedin.com/in/focusitstudio1) and  [Senait Kello](https://www.linkedin.com/in/senait-asefa-811008217)
-
-------------------------------------------------------------------------------
-
-**CONTACT US**
-:----:
-
-[ [Cacious](https://www.twitter.com/FOCUSITSTUDIO1) ] [ [Senait Kello](https://www.linkedin.com/in/senait-asefa-811008217) ]
