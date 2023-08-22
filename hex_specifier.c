@@ -1,51 +1,97 @@
-#include <stdio.h>
-#include <stdarg.h>
+#include "main.h"
 #include <stdlib.h>
 
-/* Function prototypes */
-char *get_hex_n(unsigned int num);
-char *get_hex_long_n(unsigned long int num_l);
-void _string_upper(char *str);
-int _abs(int n);
-char *_strcpy(char *dest, const char *src);
-char *get_pointer(va_list args, char *mods);
+/**
+ * get_hex - gets a string that is the hex representation of an integer
+ * @args: va_list to get integer for conversion from
+ * @mods: array containing length modifier bytes, representing t/f for l & h
+ *
+ * Return: char pointer to new hex string
+ */
+char *get_hex(va_list args, char *mods)
+{
+	int num_i;
+	unsigned int num;
+	unsigned long int num_l;
+	char *ret;
 
-/* Implementation of get_hex_n function */
-char *get_hex_n(unsigned int num) {
-    /* ... */
+	if (mods[0] > 0 && mods[1] == 0) /* l byte is lit, h is not */
+	{
+		num_l = va_arg(args, unsigned long int);
+		ret = get_hex_long_n(num_l);
+	}
+	else if (mods[1] > 0 && mods[0] == 0) /* h byte lit, l is not */
+	{
+		num_i = va_arg(args, int);
+		num = _abs(num_i);
+		ret = get_hex_n(num);
+	}
+	else /* both are lit (cancels out), or no length mods are lit */
+	{
+		num = va_arg(args, unsigned int);
+		ret = get_hex_n(num);
+	}
+	return (ret);
 }
+/**
+ * get_hex_upper - gets a string that is the upper case hex rep of an integer
+ * @args: va_list to get integer for conversion from
+ * @mods: array containing length modifier bytes, representing t/f for l & h
+ *
+ * Return: char pointer to new hex string
+ */
+char *get_hex_upper(va_list args, char *mods)
+{
+	char *ret;
 
-/* Implementation of get_hex_long_n function */
-char *get_hex_long_n(unsigned long int num_l) {
-    /* ... */
+	ret = get_hex(args, mods);
+	_string_upper(ret);
+
+	return (ret);
 }
+/**
+ * get_pointer - gets a string that contains an address in hexadecimals.
+ * @args: va_list to get hexadecimal from.
+ * @mods: length modifiers, voided, not used with this specifier
+ *
+ * Return: char pointer to the string. NULL if malloc fails.
+ */
+char *get_pointer(va_list args, char *mods)
+{
+	int length, i;
+	unsigned long int addr, temp, rem;
+	char *ret;
 
-/* Implementation of _string_upper function */
-void _string_upper(char *str) {
-    /* ... */
-}
+	(void)mods;
+	addr = va_arg(args, unsigned long int);
+	length = 1;
+	temp = addr;
+	if (addr == 0)
+	{
+		ret = malloc(5 + 1);
+		ret = _strcpy(ret, "(nil)");
+		return (ret);
+	}
+	while (temp > 15)
+	{
+		temp /= 16;
+		length++;
+	}
 
-/* Implementation of _abs function */
-int _abs(int n) {
-    /* ... */
-}
-
-/* Implementation of _strcpy function */
-char *_strcpy(char *dest, const char *src) {
-    /* ... */
-}
-
-/* Implementation of get_pointer function */
-char *get_pointer(va_list args, char *mods) {
-    /* ... */
-}
-
-int main(void) {
-    /* Example usage or testing of the functions */
-    unsigned int num = 255;
-    char *hex_str = get_hex_n(num);
-    printf("Hexadecimal representation: %s\n", hex_str);
-    free(hex_str);
-
-    return 0;
+	ret = malloc(length + 1);
+	if (!ret)
+		return (NULL);
+	ret[length] = '\0';
+	i = length - 1;
+	while (i >= 0)
+	{
+		rem = addr % 16;
+		if (rem > 9)
+			ret[i] = rem + 87;
+		else
+			ret[i] = rem + '0';
+		addr /= 16;
+		i--;
+	}
+	return (ret);
 }
